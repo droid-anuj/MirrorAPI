@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: mirror-api-backend
+    runtime: python
+    buildCommand: "./MirrorApiBackend/build.sh"
+    startCommand: "cd MirrorApiBackend && daphne MirrorApiBackend.asgi:application --port $PORT --bind 0.0.0.0"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mirror-db
+          property: connectionString
+      - key: REDIS_URL
+        sync: false # Set this in the Render Dashboard (Upstash URL)
+      - key: ALLOWED_HOSTS
+        value: "mirror-api-backend.onrender.com"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: mirror-db
+    plan: free # Use the free tier
